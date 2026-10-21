@@ -1,0 +1,6 @@
+{
+  "name": "RailYatra PRS - Train Reservation System",
+  "description": "Indian Railways Passenger Reservation System (PRS) Portal with train search, class availability, passenger booking, ERS tickets, cancellation, and admin chart operations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
