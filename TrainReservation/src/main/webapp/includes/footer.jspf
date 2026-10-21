@@ -1,0 +1,11 @@
+<%-- IRCTC Institutional Footer Fragment --%>
+<footer class="prs-footer">
+    <div class="prs-footer-inner">
+        <div>
+            &copy; Indian Railways Passenger Reservation System (PRS) • Center for Railway Information Systems (CRIS)
+        </div>
+        <div>
+            Server Gateway: PRS-CORE-PROD-01 • 256-bit SSL
+        </div>
+    </div>
+</footer>

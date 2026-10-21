@@ -1,0 +1,38 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%-- IRCTC Utility Header Fragment --%>
+<header class="prs-header">
+    <div class="prs-header-inner">
+        <div class="prs-logo-group">
+            <div class="prs-logo-badge">IR</div>
+            <div>
+                <div class="prs-subtitle">Ministry of Railways • Government of India</div>
+                <div class="prs-title">Indian Railways Passenger Reservation System</div>
+            </div>
+        </div>
+
+        <div>
+            <c:choose>
+                <c:when test="${not empty sessionScope.userName}">
+                    <span style="font-size: 11px; color: #CBD5E1;">Welcome, <strong>${sessionScope.userName}</strong> (${sessionScope.userRole})</span>
+                    <a href="logout" style="color: #F87171; margin-left: 10px; font-weight: bold; text-decoration: none;">[Logout]</a>
+                </c:when>
+                <c:otherwise>
+                    <a href="login" style="color: #F8FAFC; text-decoration: none; font-weight: 600; margin-right: 12px;">Login</a>
+                    <a href="register.jsp" style="color: #FEF08A; text-decoration: none; font-weight: 600;">Register</a>
+                </c:otherwise>
+            </c:choose>
+        </div>
+    </div>
+
+    <nav class="prs-nav">
+        <div class="prs-nav-inner">
+            <a href="index.jsp">Search Trains</a>
+            <c:if test="${not empty sessionScope.userId}">
+                <a href="my-bookings">My Bookings</a>
+            </c:if>
+            <c:if test="${sessionScope.userRole eq 'ADMIN'}">
+                <a href="admin/trains.jsp" style="background-color: #B91C1C;">Admin Console</a>
+            </c:if>
+        </div>
+    </nav>
+</header>

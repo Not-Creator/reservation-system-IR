@@ -1,0 +1,217 @@
+/* ==========================================================================
+   IRCTC-STYLE UTILITARIAN STYLESHEET
+   Spacing Grid: 8px baseline rhythm
+   Primary: #0F2C59 (Deep Navy)
+   Secondary: #B91C1C (Crimson)
+   Surface: #F8FAFC
+   ========================================================================== */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background-color: #F8FAFC;
+    color: #1E293B;
+    font-size: 13px;
+    line-height: 1.4;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Institutional Header */
+.prs-header {
+    background-color: #0F2C59;
+    color: #FFFFFF;
+    border-bottom: 2px solid #081A35;
+}
+
+.prs-header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.prs-logo-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.prs-logo-badge {
+    background: #FFFFFF;
+    color: #0F2C59;
+    font-weight: 700;
+    font-size: 18px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+}
+
+.prs-title {
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.prs-subtitle {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #CBD5E1;
+    letter-spacing: 0.8px;
+}
+
+/* Navigation Ribbon */
+.prs-nav {
+    background-color: #1E3A8A;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.prs-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
+    display: flex;
+    gap: 4px;
+}
+
+.prs-nav a {
+    color: #F1F5F9;
+    text-decoration: none;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    border-bottom: 2px solid transparent;
+}
+
+.prs-nav a:hover,
+.prs-nav a.active {
+    background-color: #0F2C59;
+    border-bottom-color: #F59E0B;
+}
+
+/* Main Container */
+.prs-container {
+    max-width: 1200px;
+    margin: 24px auto;
+    padding: 0 16px;
+    flex: 1;
+    width: 100%;
+}
+
+/* Centered Form Card (No glassmorphism, crisp 1px border) */
+.prs-card {
+    background-color: #FFFFFF;
+    border: 1px solid #CBD5E1;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(15, 44, 89, 0.08);
+}
+
+.prs-card-header {
+    background-color: #F1F5F9;
+    border-bottom: 1px solid #CBD5E1;
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #0F2C59;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.prs-card-body {
+    padding: 24px 20px;
+}
+
+/* Forms & Inputs */
+.prs-form-group {
+    margin-bottom: 16px;
+}
+
+.prs-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.prs-input {
+    width: 100%;
+    height: 38px;
+    padding: 8px 12px;
+    border: 1px solid #94A3B8;
+    border-radius: 3px;
+    font-size: 13px;
+    color: #0F172A;
+    background-color: #FFFFFF;
+}
+
+.prs-input:focus {
+    outline: none;
+    border-color: #0F2C59;
+    box-shadow: 0 0 0 1px #0F2C59;
+}
+
+/* Buttons */
+.prs-btn-primary {
+    width: 100%;
+    height: 38px;
+    background-color: #B91C1C;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.prs-btn-primary:hover {
+    background-color: #991B1B;
+}
+
+/* Error Banner */
+.prs-alert-error {
+    background-color: #FEE2E2;
+    border: 1px solid #FCA5A5;
+    color: #B91C1C;
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 3px;
+    margin-bottom: 16px;
+}
+
+/* Footer */
+.prs-footer {
+    background-color: #0F2C59;
+    color: #94A3B8;
+    border-top: 1px solid #081A35;
+    padding: 14px 16px;
+    font-size: 11px;
+    margin-top: auto;
+}
+
+.prs-footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

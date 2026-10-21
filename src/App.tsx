@@ -33,10 +33,24 @@ import {
 
 export default function App() {
   // Navigation tabs
-  const [activeTab, setActiveTab] = useState<'search' | 'results' | 'passenger' | 'payment' | 'ticket' | 'my-bookings' | 'admin' | 'chart'>('search');
+  const [activeTab, setActiveTab] = useState<'search' | 'results' | 'passenger' | 'payment' | 'ticket' | 'my-bookings' | 'admin' | 'chart' | 'login'>('search');
   
-  // Current role
-  const [userRole, setUserRole] = useState<'USER' | 'ADMIN'>('USER');
+  // Authenticated User Session (Simulating HttpServletRequest session)
+  const [currentUser, setCurrentUser] = useState<{ id: number; name: string; email: string; role: 'USER' | 'ADMIN' } | null>({
+    id: 2,
+    name: 'Rahul Sharma',
+    email: 'rahul.sharma@gmail.com',
+    role: 'USER'
+  });
+
+  // Login form state (login.jsp simulation)
+  const [loginEmail, setLoginEmail] = useState<string>('rahul.sharma@gmail.com');
+  const [loginPassword, setLoginPassword] = useState<string>('User@123');
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [redirectAfterLogin, setRedirectAfterLogin] = useState<string>('search');
+  
+  // Current role based on session
+  const userRole = currentUser ? currentUser.role : 'USER';
   
   // Clock state (24-hour IST format)
   const [currentTime, setCurrentTime] = useState<string>('');
@@ -122,11 +136,80 @@ export default function App() {
     setFilteredTrains(defaultResults);
   }, [trains]);
 
-  // Handle Class Selection
+  // Handle Login Authentication
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError(null);
+
+    const email = loginEmail.trim();
+    const password = loginPassword.trim();
+
+    // 1. Empty validation
+    if (!email || !password) {
+      setLoginError('Email and password are required.');
+      return;
+    }
+
+    // 2. Verify credentials (simulating AuthService.login with BCrypt.checkpw)
+    if (email === 'admin@railnet.gov.in' && password === 'Admin@123') {
+      setCurrentUser({
+        id: 1,
+        name: 'PRS Chief Controller',
+        email: 'admin@railnet.gov.in',
+        role: 'ADMIN'
+      });
+      setActiveTab('admin');
+      return;
+    }
+
+    if (email === 'rahul.sharma@gmail.com' && password === 'User@123') {
+      setCurrentUser({
+        id: 2,
+        name: 'Rahul Sharma',
+        email: 'rahul.sharma@gmail.com',
+        role: 'USER'
+      });
+      setActiveTab((redirectAfterLogin as any) || 'search');
+      return;
+    }
+
+    if (email === 'priya.patel@gmail.com' && password === 'User@123') {
+      setCurrentUser({
+        id: 3,
+        name: 'Priya Patel',
+        email: 'priya.patel@gmail.com',
+        role: 'USER'
+      });
+      setActiveTab((redirectAfterLogin as any) || 'search');
+      return;
+    }
+
+    // Uniform error message to prevent account enumeration
+    setLoginError('Invalid email or password.');
+  };
+
+  // Handle Logout (simulating LogoutServlet session.invalidate())
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setLoginEmail('');
+    setLoginPassword('');
+    setLoginError(null);
+    setActiveTab('login');
+  };
+
+  // Handle Class Selection (with AuthFilter check)
   const handleSelectClass = (train: Train, classCode: string, fare: number) => {
     setSelectedTrain(train);
     setSelectedClass(classCode);
     setSelectedClassFare(fare);
+    
+    // AuthFilter simulation: redirect to login if session has no user
+    if (!currentUser) {
+      setRedirectAfterLogin('passenger');
+      setActiveTab('login');
+      return;
+    }
+
     setActiveTab('passenger');
   };
 
@@ -298,26 +381,29 @@ export default function App() {
               <span>IST: {currentTime || '24:00:00'}</span>
             </div>
 
-            {/* Role Switcher */}
-            <div className="flex items-center bg-[#081A35] rounded p-0.5 border border-slate-700">
-              <button
-                onClick={() => setUserRole('USER')}
-                className={`px-2 py-1 rounded text-xs font-semibold flex items-center gap-1 transition-colors ${
-                  userRole === 'USER' ? 'bg-[#15803D] text-white shadow-xs' : 'text-slate-300 hover:text-white'
-                }`}
-              >
-                <User className="w-3 h-3" />
-                Passenger (User)
-              </button>
-              <button
-                onClick={() => setUserRole('ADMIN')}
-                className={`px-2 py-1 rounded text-xs font-semibold flex items-center gap-1 transition-colors ${
-                  userRole === 'ADMIN' ? 'bg-[#B91C1C] text-white shadow-xs' : 'text-slate-300 hover:text-white'
-                }`}
-              >
-                <ShieldCheck className="w-3 h-3" />
-                PRS Admin
-              </button>
+            {/* Session Auth State Display */}
+            <div className="flex items-center gap-2">
+              {currentUser ? (
+                <div className="flex items-center gap-2 bg-[#081A35] px-2.5 py-1 rounded border border-slate-700">
+                  <span className="text-[11px] text-slate-300">
+                    Welcome, <strong className="text-white">{currentUser.name}</strong>{' '}
+                    <span className="text-[10px] text-amber-300">({currentUser.role})</span>
+                  </span>
+                  <button
+                    onClick={handleLogout}
+                    className="text-red-400 hover:text-red-300 text-[11px] font-bold underline ml-1"
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => { setRedirectAfterLogin('search'); setActiveTab('login'); }}
+                  className="px-3 py-1 bg-[#15803D] hover:bg-[#166534] text-white text-xs font-bold rounded flex items-center gap-1 shadow-xs"
+                >
+                  <User className="w-3.5 h-3.5" /> Sign In / Login
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -335,7 +421,14 @@ export default function App() {
                 Book Ticket / Search
               </button>
               <button
-                onClick={() => setActiveTab('my-bookings')}
+                onClick={() => {
+                  if (!currentUser) {
+                    setRedirectAfterLogin('my-bookings');
+                    setActiveTab('login');
+                  } else {
+                    setActiveTab('my-bookings');
+                  }
+                }}
                 className={`px-3 py-1.5 font-semibold rounded-xs border-b-2 transition-colors ${
                   activeTab === 'my-bookings' ? 'border-amber-400 text-white bg-blue-900/60' : 'border-transparent text-blue-100 hover:bg-blue-800'
                 }`}
@@ -358,6 +451,13 @@ export default function App() {
                   }`}
                 >
                   Admin Master Console
+                </button>
+              )}
+              {activeTab === 'login' && (
+                <button
+                  className="px-3 py-1.5 font-semibold rounded-xs border-b-2 border-amber-400 text-white bg-blue-900/60"
+                >
+                  User Login (login.jsp)
                 </button>
               )}
             </div>
@@ -384,6 +484,130 @@ export default function App() {
             <button onClick={() => setCancellationNotice(null)} className="text-emerald-700 hover:text-emerald-900 font-bold ml-2">
               Dismiss
             </button>
+          </div>
+        )}
+
+        {/* LOGIN SCREEN (login.jsp simulation) */}
+        {activeTab === 'login' && (
+          <div className="py-6 flex flex-col items-center">
+            {/* Narrow Centered Form Box (max-w-[380px]) with 1px Solid Border */}
+            <div className="w-full max-w-[380px] bg-white border border-[#CBD5E1] rounded shadow-xs overflow-hidden">
+              <div className="bg-[#F1F5F9] border-b border-[#CBD5E1] px-4 py-3 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Lock className="w-4 h-4 text-[#0F2C59]" />
+                  <h2 className="font-bold text-xs text-[#0F2C59] uppercase tracking-wide">
+                    User Login • IRCTC PRS
+                  </h2>
+                </div>
+                <span className="text-[10px] text-slate-500 font-mono-num">SECURE_AUTH</span>
+              </div>
+
+              <div className="p-6">
+                {/* Error Message Alert */}
+                {loginError && (
+                  <div className="mb-4 p-2.5 bg-red-50 border border-red-300 rounded text-xs text-[#B91C1C] font-semibold flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0 text-[#B91C1C]" />
+                    <span>{loginError}</span>
+                  </div>
+                )}
+
+                {/* Login Form */}
+                <form onSubmit={handleLogin} className="space-y-4">
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1.5" htmlFor="login-email">
+                      Registered Email Address
+                    </label>
+                    <input
+                      id="login-email"
+                      type="email"
+                      required
+                      value={loginEmail}
+                      onChange={(e) => setLoginEmail(e.target.value)}
+                      placeholder="name@example.com"
+                      className="w-full h-9 px-3 bg-white border border-[#94A3B8] rounded text-xs text-slate-900 focus:outline-hidden focus:border-[#0F2C59] focus:ring-1 focus:ring-[#0F2C59]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1.5" htmlFor="login-password">
+                      Password
+                    </label>
+                    <input
+                      id="login-password"
+                      type="password"
+                      required
+                      value={loginPassword}
+                      onChange={(e) => setLoginPassword(e.target.value)}
+                      placeholder="Enter your password"
+                      className="w-full h-9 px-3 bg-white border border-[#94A3B8] rounded text-xs text-slate-900 focus:outline-hidden focus:border-[#0F2C59] focus:ring-1 focus:ring-[#0F2C59]"
+                    />
+                  </div>
+
+                  <div className="pt-2">
+                    <button
+                      type="submit"
+                      className="w-full h-9 bg-[#B91C1C] hover:bg-[#991B1B] text-white text-xs font-bold uppercase tracking-wider rounded transition-colors shadow-xs"
+                    >
+                      Secure Sign In
+                    </button>
+                  </div>
+                </form>
+
+                <div className="mt-4 pt-3 border-t border-slate-200 text-center text-[11px] text-slate-500">
+                  New to PRS?{' '}
+                  <button
+                    onClick={() => alert('Registration feature will be built in the next step!')}
+                    className="text-[#0F2C59] font-bold hover:underline"
+                  >
+                    Register for an Account
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Credentials Helper for Testing */}
+            <div className="mt-4 w-full max-w-[380px] p-3 bg-slate-100 border border-dashed border-slate-400 rounded text-xs text-slate-600 space-y-1.5">
+              <div className="font-bold text-[11px] text-slate-800 uppercase">Test Credentials:</div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="font-bold text-slate-700">Passenger:</span>{' '}
+                  <code className="text-[11px] font-mono-num text-blue-900">rahul.sharma@gmail.com</code> / <code className="text-[11px] font-mono-num">User@123</code>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLoginEmail('rahul.sharma@gmail.com');
+                    setLoginPassword('User@123');
+                    setLoginError(null);
+                  }}
+                  className="px-2 py-0.5 bg-white border border-slate-300 text-[10px] font-bold rounded hover:bg-slate-50"
+                >
+                  Fill
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="font-bold text-slate-700">PRS Admin:</span>{' '}
+                  <code className="text-[11px] font-mono-num text-red-900">admin@railnet.gov.in</code> / <code className="text-[11px] font-mono-num">Admin@123</code>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLoginEmail('admin@railnet.gov.in');
+                    setLoginPassword('Admin@123');
+                    setLoginError(null);
+                  }}
+                  className="px-2 py-0.5 bg-white border border-slate-300 text-[10px] font-bold rounded hover:bg-slate-50"
+                >
+                  Fill
+                </button>
+              </div>
+
+              <div className="pt-1 text-[10px] text-slate-500">
+                • Try typing wrong password or empty fields to verify error messages and validation!
+              </div>
+            </div>
           </div>
         )}
 
